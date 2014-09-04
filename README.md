@@ -1,112 +1,79 @@
-# [Twitter Bootstrap v2.2.2](http://twitter.github.com/bootstrap) [![Build Status](https://secure.travis-ci.org/twitter/bootstrap.png)](http://travis-ci.org/twitter/bootstrap)
+FORMAT: 1A
+HOST: https://www.livingroomofsatoshi.com/api/v1
 
-Bootstrap is a sleek, intuitive, and powerful front-end framework for faster and easier web development, created and maintained by [Mark Otto](http://twitter.com/mdo) and [Jacob Thornton](http://twitter.com/fat).
+# Living Room of Satoshi API
+Pay any Australian bill with bitcoin using our API.
 
-To get started, checkout http://getbootstrap.com!
+**HTTP Basic Auth** is required for all API endpoints. Request an API username and password at support@livingroomofsatoshi.com
 
+# Group BPAY Bills
+Create a BPAY bill, which you can then pay with bitcoin.
 
-
-## Quick start
-
-Three quick start options are available:
-
-* [Download the latest release](https://github.com/twitter/bootstrap/zipball/master).
-* Clone the repo: `git clone git://github.com/twitter/bootstrap.git`.
-* Install with Twitter's [Bower](http://twitter.github.com/bower): `bower install bootstrap`.
+Bitcoin Payment must be made within 5 minutes, otherwise the bill will expire.
 
 
+## BPAY Bills [/bills/bpay]
 
-## Versioning
+### Create a BPAY Bill [POST]
 
-For transparency and insight into our release cycle, and for striving to maintain backward compatibility, Bootstrap will be maintained under the Semantic Versioning guidelines as much as possible.
++ Request (application/json)
 
-Releases will be numbered with the following format:
+        { 
+          "amount":290.95, 
+          "biller":"23796",
+          "ref":"1000023451"
+        }
 
-`<major>.<minor>.<patch>`
++ Response 201 (application/json)
 
-And constructed with the following guidelines:
+        {
+          "id":1,
+          "amount":123.45,
+          "biller":"23796",
+          "ref":"1000023451",
+          "status":"UNPAID",
+          "bitcoin_payment_address":"1AaxRWDPRbxXvYfFCjwNw4zQSf2tBXj9UA"
+        }
 
-* Breaking backward compatibility bumps the major (and resets the minor and patch)
-* New additions without breaking backward compatibility bumps the minor (and resets the patch)
-* Bug fixes and misc changes bumps the patch
-
-For more information on SemVer, please visit http://semver.org/.
-
-
-
-## Bug tracker
-
-Have a bug or a feature request? [Please open a new issue](https://github.com/twitter/bootstrap/issues). Before opening any issue, please search for existing issues and read the [Issue Guidelines](https://github.com/necolas/issue-guidelines), written by [Nicolas Gallagher](https://github.com/necolas/).
-
-
-
-## Community
-
-Keep track of development and community news.
-
-* Follow [@twbootstrap on Twitter](http://twitter.com/twbootstrap).
-* Read and subscribe to the [The Official Twitter Bootstrap Blog](http://blog.getbootstrap.com).
-* Have a question that's not a feature request or bug report? [Ask on the mailing list.](http://groups.google.com/group/twitter-bootstrap)
-* Chat with fellow Bootstrappers in IRC. On the `irc.freenode.net` server, in the `##twitter-bootstrap` channel.
++ Response 400 (application/json)
+        
+        [{"field":"biller","message":"Biller is unknown."}]
 
 
+### List all BPAY Bills [GET]
++ Response 200 (application/json)
 
-## Developers
+        [{
+          "id": 1, "phrase": "The journalists drove carefully", "customerRef": "443556", "amount": "290.95", "dueDate": "20141030", "status": "UNPAID"
+        }, {
+          "id": 2, "phrase": "He played tennis yesterday", "customerRef": "443556", "amount": "290.95", "dueDate": "20141030", "status": "UNPAID" }
 
-We have included a makefile with convenience methods for working with the Bootstrap library.
+        }]
 
-+ **dependencies**
-Our makefile depends on you having recess, connect, uglify.js, and jshint installed. To install, just run the following command in npm:
+     
+## BPAY Bill [/bills/bpay/{id}]
 
-```
-$ npm install recess connect uglify-js jshint -g
-```
++ Parameters
+    + id (required, number) ... Numeric `id` of the Bill
 
-+ **build** - `make`
-Runs the recess compiler to rebuild the `/less` files and compiles the docs pages. Requires recess and uglify-js. <a href="http://twitter.github.com/bootstrap/extend.html#compiling">Read more in our docs &raquo;</a>
+### Retrieve a single BPAY Bill [GET]
++ Response 200 (application/json)
 
-+ **test** - `make test`
-Runs jshint and qunit tests headlessly in [phantomjs](http://code.google.com/p/phantomjs/) (used for ci). Depends on having phantomjs installed.
+    + Header
 
-+ **watch** - `make watch`
-This is a convenience method for watching just Less files and automatically building them whenever you save. Requires the Watchr gem.
+            X-My-Header: The Value
 
+    + Body
 
+            { "id": 1, "phrase": "The journalists drove carefully", "customerRef": "443556", "amount": "290.95", "dueDate": "20141030", "status": "UNPAID" }
 
-## Contributing
+# Group Rates
+Bitcoin Exchange rates used for all calculations.
 
-Please submit all pull requests against *-wip branches. If your pull request contains JavaScript patches or features, you must include relevant unit tests. All HTML and CSS should conform to the [Code Guide](http://github.com/mdo/code-guide), maintained by [Mark Otto](http://github.com/mdo).
+## Current Rate [/current_rate]
+Updated every 30 seconds.
 
-Thanks!
+### Retrieve Current rate [GET]
++ Response 200 (application/json)
 
-
-
-## Authors
-
-**Mark Otto**
-
-+ http://twitter.com/mdo
-+ http://github.com/mdo
-
-**Jacob Thornton**
-
-+ http://twitter.com/fat
-+ http://github.com/fat
-
-
-
-## Copyright and license
-
-Copyright 2012 Twitter, Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this work except in compliance with the License.
-You may obtain a copy of the License in the LICENSE file, or at:
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+        {"amount":500.00,"currency":"AUD"}
